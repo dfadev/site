@@ -1,0 +1,9 @@
+*.hxproj
+.*
+!/.gitignore
+!/.travis.yml
+/bin
+obj/
+node_modules/
+htdocs/
+yarn.lock

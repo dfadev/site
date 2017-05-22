@@ -1,0 +1,9 @@
+{
+	">>>": "AppServer Configuration File",
+
+	"listen": {
+		"port": "5200", 				"//":"Port to listen on",
+		"host": "localhost", 			"//":"IP address to bind to"
+	}
+}
+
