@@ -1,12 +1,16 @@
 obj/build-config.hxml
-hxml/common.hxml
+hxml/default/common.hxml
 --each
 -cmd echo Building browser.js
 --next
+hxml/custom/client.hxml
 obj/pages-config.hxml
+
 # browser define
 -D browser
+
 # Main class
 -main App
+
 # Target output filename
 -js obj/browser.js

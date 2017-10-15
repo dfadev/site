@@ -16,3 +16,5 @@
 -cp extern
 # Utility classes
 -cp util
+
+hxml/custom/common.hxml

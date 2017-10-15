@@ -1,9 +1,10 @@
 obj/build-config.hxml
-hxml/common.hxml
+hxml/default/common.hxml
 --each
 ### Compliation notice
 -cmd echo Building appserver
 --next
+hxml/custom/appserver.hxml
 
 ### appserver define
 -D appserver
