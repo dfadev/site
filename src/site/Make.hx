@@ -48,7 +48,7 @@ class Make {
 			var script = Reflect.field(config.scripts, cmd);
 			if (script != null) {
 				if (verbose) Sys.println(script);
-				execute(script);
+				Sys.command(script);
 			} else Sys.println('unknown command: $cmd');
 		}
 	}
@@ -61,10 +61,8 @@ class Make {
 		Sys.println('   Install \'site\' convenience executable, default path is /usr/local/bin.  Should be run as root.\n');
 		Sys.println('site init');
 		Sys.println('   Copy site boiler plate to current directory and build it\n');
-		Sys.println('site pack');
-		Sys.println('   Pack javascript and css\n');
-		Sys.println('site hxml');
-		Sys.println('   Generate obj/build-config.json\n');
+		Sys.println('site build');
+		Sys.println('   Build site\n');
 		Sys.println('site autobuild');
 		Sys.println('   Build site, then wait for changes and build site again\n');
 		Sys.println('site run');
@@ -77,17 +75,12 @@ class Make {
 		}
 	}
 
-	function execute(cmd, ?args:Array<String>) {
-		if (verbose) {
-			if (args != null) Sys.println('$cmd ${args.join(' ')}');
-			else Sys.println(cmd);
-		}
-		Sys.command(cmd, args);
-	}
-
 	function readConfigFile() {
-		configFilename = Path.join([cwd, "config", "site-config.json"]);
+		configFilename = Path.join([cwd, "config.json"]);
 		config = Json.parse(File.getContent(configFilename));
+		var pages = config.pages;
+		config = config.site;
+		config.pages = pages;
 		From.removeMeta(config);
 		compress = config.browser.compress;
 		verbose = config.verbose;
@@ -96,7 +89,7 @@ class Make {
 	function installNodeModules() {
 		if (FileSystem.exists("node_modules")) return;
 		Sys.println('Running npm install');
-		execute("npm install");
+		Sys.command("npm install");
 	}
 
 	function pack() {
@@ -117,30 +110,18 @@ class Make {
 	function install() {
 		var filename = args.length == 1 ? Path.join([ '/', 'usr', 'local', 'bin', 'site' ])  : Path.join([args[1], 'site']);
 		try {
-			execute('cp', [ '-p', Path.join([ siteLib, 'obj', 'site' ]), filename ]);
+			Sys.command('cp', [ '-p', Path.join([ siteLib, 'obj', 'site' ]), filename ]);
 		} catch (err:Dynamic) {
 			Sys.println('Failed to install $filename, are you root?');
 			Sys.exit(-1);
 		}
 	}
 
-	function createDirectories() {
-		// create directories
-		for (dir in [ 'config', 'htdocs', 'hxml', Path.join([ 'src', 'view', 'css' ]), 'obj', Path.join([ 'src', 'model' ]), Path.join([ 'src', 'controller' ]) ]) {
-			var dir = Path.join([cwd, dir]);
-			FileSystem.createDirectory(dir);
-		}
-	}
-
 	function init() {
-		var name = Path.withoutDirectory(Path.removeTrailingSlashes(cwd));
-
-		createDirectories();
-		execute('cp -ruv ' + siteLib + 'template/* .');
+		Sys.command('cp -ruv --backup=t ' + siteLib + 'template/* .');
 	}
 
 	function hxml() {
-		createDirectories();
 		readConfigFile();
 		configOutputFilename = Path.join([cwd, 'obj', 'build-config.hxml' ]);
 		Sys.println('Creating $configOutputFilename');
@@ -174,11 +155,9 @@ class Make {
 		// include components
 		var pagesOutputFilename = Path.join([cwd, 'obj', 'pages-config.hxml' ]);
 		content = "";
-		var pages = Json.parse(File.getContent(Path.join([ 'config', 'pages-config.json' ])));
-		From.removeMeta(pages);
-		var keys = Reflect.fields(pages);
+		var keys = Reflect.fields(config.pages);
 		var components = new StringMap();
-		for (key in keys) components.set(Reflect.field(pages, key).component, "");
+		for (key in keys) components.set(Reflect.field(config.pages, key).component, "");
 		for (value in components.keys()) content += '$value\n';
 		File.saveContent(pagesOutputFilename, content);
 	}
@@ -227,7 +206,7 @@ class Make {
 				var content = File.getContent(filename);
 				combined += content + "\r\n";
 			} else {
-				javascriptConfig.push( { content: null, attributes: { src: href, type: "text/javascript" } } );
+				javascriptConfig.push( { attributes: { src: href, type: "text/javascript" } } );
 			}
 		}
 

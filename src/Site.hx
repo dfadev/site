@@ -18,12 +18,24 @@ class Site {
 	static public inline function run() TcpServer.execute(cfg);
 #end
 
+#if !browser
+		static function parseConfig(configFilename:String) {
+			var config:Dynamic = { };
+			var data = haxe.Json.parse(sys.io.File.getContent(configFilename));
+			config = #if appserver data.appserver #else data.webserver #end;
+			config.pages = data.pages;
+			return config;
+		}
+#end
+
 	static public function setup(msgType, msgHandler) {
 #if browser
-		var config:Dynamic = util.From.json("config/browser-config.json");
-		config.pages = util.From.json("config/pages-config.json");
+		var config:Dynamic = util.From.json("config.json", "browser");
+		config.pages = util.From.json("config.json", "pages");
 #else
 		var config:Dynamic = { };
+		var configFilename = "config.json";
+		var outputPath = 'htdocs';
 
 		// process arguments
 		var args = Sys.args();
@@ -32,39 +44,39 @@ class Site {
 			Sys.exit(0);
 		};
 		var argHandler = util.Args.generate([
-			@doc("Pages configuration file")
-			["-d", "--pages"] => function(pagesConfigFilename:String) config.pages = haxe.Json.parse(sys.io.File.getContent(pagesConfigFilename)),
-
 			@doc("Configuration file")
-			["-c", "--config"] => function(configFilename:String) config = haxe.Json.parse(sys.io.File.getContent(configFilename)),
-#if renderview
+			["-c", "--config"] => function(fname) configFilename = fname,
+
+			#if renderview
 			@doc("Output path")
-			["-o", "--output"] => function(outputPath:String) config.outputPath = outputPath,
-#end
+			["-o", "--output"] => function(path:String) outputPath = path,
+			#end
 
 			_ => function(arg:String) help('Error: $arg\n')
 		]);
 
-		if (args.length < 2) help('Missing arguments\n' + argHandler.getDoc()); else argHandler.parse(args);
-
+		argHandler.parse(args);
+		config = parseConfig(configFilename);
+		config.outputPath = outputPath;
 		From.removeMeta(config.pages);
 
 		// merge in defaults with config (except browser, require explicit config values there)
 		config = site.Config.defaults(config);
 
-#if webserver
+		#if webserver
 		if (config.html.render) config.html.renderFunction = site.view.Views.render;
-#end
+		#end
 
 #end
+
 
 #if (!appserver && (!browser || site_ithril))
 		// setup routing
-#if !js
+		#if !js
 		var fields:Array<String> = Reflect.fields(config.pages);
-#else
+		#else
 		var fields:Array<String> = untyped __js__("Object.keys({0})", config.pages);
-#end
+		#end
 		for (href in fields) {
 			var view = m(HtmlBase, site.Config.pageAttributes(href, config));
 			Views.setRoute(href, function (vnode) return view);
