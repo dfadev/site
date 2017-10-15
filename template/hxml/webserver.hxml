@@ -1,0 +1,27 @@
+obj/build-config.hxml
+hxml/common.hxml
+--each
+-cmd echo Building webserver.js
+--next
+obj/pages-config.hxml
+# js-kit provides js externs
+-lib js-kit
+# hxnodejs provides nodejs externs
+-lib hxnodejs
+# webserver define
+-D webserver
+# Main class
+-main App
+# Target output filename
+-js obj/webserver.out.js
+--next
+# Insert interpreter reference into output
+-cmd sed -i '1s/^/#!\/usr\/bin\/env node\n/' obj/webserver.out.js
+# Make output executable
+-cmd chmod a+x obj/webserver.out.js
+# Replace executable
+-cmd cp obj/webserver.out.js obj/webserver.js
+# Remove temporary output
+-cmd rm obj/webserver.out.js
+# Publish
+-cmd cp obj/webserver.js webserver.js

@@ -1,0 +1,18 @@
+# https://haxe.org/manual/target-javascript-expose.html
+-D shallow-expose
+
+# Site provides messages
+-lib site
+
+# Ithril provides templating and mithril:
+-lib ithril
+# hxbit provides binary serialization
+-lib hxbit
+
+# Classpaths:
+# primary source files
+-cp src
+# Haxe externs
+-cp extern
+# Utility classes
+-cp util

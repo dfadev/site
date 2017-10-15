@@ -1,0 +1,24 @@
+obj/build-config.hxml
+hxml/common.hxml
+--each
+-cmd echo Building renderview.js
+--next
+obj/pages-config.hxml
+# js-kit provides js externs
+-lib js-kit
+# hxnodejs provides nodejs externs
+-lib hxnodejs
+# render view define
+-D renderview
+# Main class
+-main App
+# Target output filename
+-js obj/renderview.js
+--next
+
+# Insert interpreter reference into output
+-cmd sed -i '1s/^/#!\/usr\/bin\/env node\n/' obj/renderview.js
+# Make output executable
+-cmd chmod a+x obj/renderview.js
+# Publish
+-cmd cp obj/renderview.js renderview.js

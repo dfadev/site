@@ -1,0 +1,17 @@
+{
+  "name": "site",
+  "url" : "https://github.com/dfadev/site",
+  "license": "GPLv3",
+  "tags": ["js", "html", "template", "web", "mithril" ],
+  "description": "Web Messaging",
+  "version": "1.0.0",
+  "releasenote": "",
+  "contributors": ["dfadev"],
+  "classPath": "src", 
+  "dependencies": {
+  },
+  "tape": {
+    "dependencies": {
+    }
+  }
+}

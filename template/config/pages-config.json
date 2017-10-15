@@ -1,0 +1,8 @@
+{
+	">>>": "Pages Configuration File",
+
+	"/": {
+		"component": "view.HomePage",
+		"title": "Home"
+	}
+}

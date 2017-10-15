@@ -1,0 +1,28 @@
+--each
+
+### HXML BUILD FLAGS
+-cmd site hxml
+--next
+
+### CLIENT
+hxml/client.hxml
+--next
+
+### PACK JS & CSS
+-cmd site pack
+--next
+
+### APPSERVER
+hxml/appserver.hxml
+--next
+
+### RENDERVIEW
+hxml/renderview.hxml
+--next
+
+### WEBSERVER
+hxml/webserver.hxml
+--next
+
+### STATIC HTML
+-cmd site html
