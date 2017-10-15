@@ -117,7 +117,7 @@ class Make {
 	function install() {
 		var filename = args.length == 1 ? Path.join([ '/', 'usr', 'local', 'bin', 'site' ])  : Path.join([args[1], 'site']);
 		try {
-			File.copy(Path.join([ siteLib, 'siteobj', 'site' ]), filename);
+			execute('cp', [ '-p', Path.join([ siteLib, 'obj', 'site' ]), filename ]);
 		} catch (err:Dynamic) {
 			Sys.println('Failed to install $filename, are you root?');
 			Sys.exit(-1);
