@@ -82,7 +82,7 @@ class Make {
 			if (args != null) Sys.println('$cmd ${args.join(' ')}');
 			else Sys.println(cmd);
 		}
-		Sys.command(cmd);
+		Sys.command(cmd, args);
 	}
 
 	function readConfigFile() {
