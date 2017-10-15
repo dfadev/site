@@ -29,7 +29,7 @@ class HtmlBase extends Component {
 		if (component == null) {
 			component = "div";
 			attrs = { };
-			txt = "Missing Component";
+			txt = "Missing Component: " + vnode.attrs.component;
 		}
 		return @m[
 #if !browser
