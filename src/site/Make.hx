@@ -137,7 +137,6 @@ class Make {
 
 		createDirectories();
 		execute('cp -ruv ' + siteLib + 'template/* .');
-		installNodeModules();
 	}
 
 	function hxml() {
