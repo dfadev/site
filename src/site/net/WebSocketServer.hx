@@ -1,6 +1,7 @@
 package site.net;
 
 import js.npm.uws.WebSocket;
+import haxe.io.Bytes;
 
 class WebSocketServer {
 	static var opts = { binary: true };
@@ -36,7 +37,7 @@ class WebSocketServer {
 			});
 
 			WebServer.checkSocketAuth(socket.req, function(err) {
-				socket.on('message', function (msg:js.node.Buffer) DataMessage.handleMessage(socket.id, socket.id, msg.hxToBytes()));
+				socket.on('message', function (msg:js.html.ArrayBuffer) DataMessage.handleMessage(socket.id, socket.id, Bytes.ofData(msg)));
 				DataMessage.emit(Connected(socket));
 			});
 		});
