@@ -18,13 +18,14 @@ class From
 		return macro $v{value};
 	}
 
-    macro public static function json(path:String) { //:ExprOf<{}> {
-        var content = loadFileAsString(path);
-        var obj = try haxe.Json.parse(content) catch (e:Dynamic) {
-            haxe.macro.Context.error('Json from $path failed to validate: $e', Context.currentPos());
-        }
-				removeMeta(obj);
-        return toExpr(obj);
+    macro public static function json(path:String, rootNode:String = null) { //:ExprOf<{}> {
+			var content = loadFileAsString(path);
+			var obj = try haxe.Json.parse(content) catch (e:Dynamic) {
+				haxe.macro.Context.error('Json from $path failed to validate: $e', Context.currentPos());
+			}
+			if (rootNode != null) obj = Reflect.field(obj, rootNode);
+			removeMeta(obj);
+			return toExpr(untyped obj);
     }
 
 	static public function removeMeta(obj) {
@@ -46,11 +47,10 @@ class From
 		}
 	}
 
-    #if macro
+	#if macro
 	static function toExpr(v:Dynamic) return Context.makeExpr(v, Context.currentPos());
 
 	static public function loadFileAsString(path:String) return sys.io.File.getContent(Context.resolvePath(path));
-
 	#end
 
 #if sys
