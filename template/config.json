@@ -1,0 +1,218 @@
+{
+	"appserver": {
+		"listen": {
+			"port": "5200", 					"//":"Port to listen on",
+			"host": "localhost", 			"//":"IP address to bind to"
+		}
+	},
+
+	"webserver": {
+		"html": {
+			"path": "htdocs",				"//":"Path to static HTML files",
+			"render": true,					"//":"Should rendered HTML be served",
+			"lang": "en",						"//":"Default charset meta",
+			"javascript": true,			"//":"Include javascript",
+			"css": true,						"//":"Include css",
+			"options": {
+				"dotFiles": "ignore",
+				"etag": false,
+				"extensions": false,
+				"index": [ "index.html", "index.htm" ],
+				"lastModified": true,
+				"maxAge": "24h",
+				"redirect": true
+			},
+			"meta": [
+				{ "charset": "utf-8" },
+				{ "name": "viewport", "content": "width=device-width, initial-scale=1.0, shrink-to-fit=no" }
+			],
+			"link": [
+				{ "rel": "icon", "type": "image/x-icon", "href": "data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA/7VrAP8AJgD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEQARAAEAEQERABEQEQARERERERERABEREREREREAEREREREREQARERERERERABERMxERMxEAERMyIRMyIQABEzIhEzIgAAETMzETMzAAAREzEREzEAAAEREREREAAAABEREREAAAAAABERAAAAAAAAAAAAAAD//wAAuZ0AAJGJAACAAQAAgAEAAIABAACAAQAAgAEAAIABAADAAwAAwAMAAMADAADgBwAA8A8AAPw/AAD//wAA" }
+			]
+		},
+
+		"listen": {
+			"port": "4200", 				"//":"Port to listen on",
+			"host": "localhost", 		"//":"IP address to bind to",
+			"httpLogFormat": "dev", "//":"Morgan HTTP format string",
+			"compression": true, 		"//":"Enable gzip compression",
+			"backlog": 511, 				"//":"Maximum queued connections",
+			"websockets": true,			"//":"Enable websockets"
+		},
+
+		"appsrv": [
+			{
+				"host": "localhost",
+				"port": 5200
+			}
+		],
+
+		"session": {
+			"name": "",										"//":"Session name",
+			"resave": false,							"//":"Resave every time",
+			"saveUninitialized": true,		"//":"Save uninitialized sessions",
+			"secret": "123",							"//":"Secret hashing",
+			"store": {										"//":"SessionStore configuration"
+			}
+		},
+
+		"auth": {
+			"options": {
+				"failureRedirect": "/",			"//":"Redirect here on bad auth",
+				"successRedirect": "/",			"//":"Redirect here on successful auth",
+				"failureFlash": "",					"//":"Flash this message on bad auth",
+				"successFlash": "",					"//":"Flash this message on successful auth",
+				"scope": [ ],								"//":"Auth scope",
+				"display": "",							"//":"Auth description",
+				"session": true,						"//":"Use session cookie",
+				"logoutURL": "/logout",			"//":"URL to logout user"
+			},
+
+			"github": {										"//":"GitHub auth config",
+				"enable": false,
+				"clientID": "",
+				"clientSecret": "",
+				"callbackURL": "http://localhost:4200/github",
+				"strategy": "passport-github"
+			},
+
+			"facebook": {									"//":"Facebook auth config",
+				"enable": false,
+				"clientID": "CLIENTID",
+				"clientSecret": "CLIENTSECRET",
+				"callbackURL": "http://localhost:4200/facebook",
+				"strategy": "passport-facebook"
+			},
+
+			"google": {										"//":"Google auth config",
+				"enable": false,
+				"clientID": "CLIENTID",
+				"clientSecret": "CLIENTSECRET",
+				"callbackURL": "http://localhost:4200/google",
+				"strategy": "passport-google-oauth20"
+			},
+
+			"twitter": {									"//":"Twitter auth config",
+				"enable": false,
+				"consumerKey": "CLIENTID",
+				"consumerSecret": "CLIENTSECRET",
+				"callbackURL": "http://localhost:4200/twitter",
+				"strategy": "passport-twitter"
+			}
+		}
+
+	},
+
+	"site": {
+		"verbose": true,
+
+		"options": [ { "-dce": "full" }, "-debug" ],
+
+		"defines": [ "analyzer-optimize" ],
+
+		"appserver": {
+			"build": true,
+			"strip": true
+		},
+
+		"browser": {
+			"build": true,
+			"compress": true,
+			"websocket": true,
+			"mithril": true
+		},
+
+		"webserver": {
+			"build": true,
+			"htdocs": "htdocs"
+		},
+
+		"renderview": {
+			"build": true
+		},
+
+		"css": [
+			{
+				"src": [ "src/view/css/stylesheet.scss" ],
+				"href": [ "stylesheet.css", "stylesheet.min.css" ],
+				"dest": "htdocs",
+				"method": "combine",
+				"minifier": "sass-compressed"
+			}
+		],
+
+		"javascript": [
+			{
+				"src": [ "node_modules/mithril/mithril.js", "node_modules/mithril/mithril.min.js" ],
+				"href": [ "mithril.js", "mithril.min.js" ],
+				"dest": "htdocs",
+				"method": "combine"
+			},
+			{
+				"src": [ "obj/browser.js" ],
+				"href": [ "browser.js", "browser.min.js" ],
+				"dest": "htdocs",
+				"method": "combine",
+				"minifier": "uglifyjs"
+			}
+		],
+
+		"minifiers": {
+			"uglifyjs": {
+				"proc": "uglifyjs",
+				"args": [ "--compress", "--mangle", "--" ]
+			},
+			"closure-compiler": {
+				"proc": "closure-compiler",
+				"args": [ "-O", "-SIMPLE" ]
+			},
+			"sass-compressed": {
+				"proc": "sass",
+				"args": [ "--style", "compressed" ]
+			},
+			"sass-compact": {
+				"proc": "sass",
+				"args": [ "--style", "compact" ]
+			}
+		},
+
+		"scripts": {
+			"build": "./build.sh",
+
+			"appsrv": "node_modules/nodemon/bin/nodemon.js -w appserver -e \".\"  -x ./appserver",
+
+			"websrv": "node_modules/nodemon/bin/nodemon.js -w webserver.js -e \".\" -x ./webserver.js",
+
+			"run": "concurrently \"site appsrv\" \"site websrv\"",
+
+			"autobuild": "node_modules/nodemon/bin/nodemon.js -x \"./build.sh\" -e \"hx hxml json scss\" -i \"obj\" -i \"node_modules\"",
+
+			"clean": "rm -rf htdocs obj node_modules .sass-cache appserver webserver.js renderview.js",
+
+			"html": "./renderview.js"
+		}
+	},
+
+	"pages": {
+		"/": {
+			"component": "view.HomePage",
+			"title": "Home"
+		}
+	},
+
+	"browser": {
+		"ws": {
+			"enable": true,
+			"url": "ws://localhost:4200",			"//":"WS URL browser connects to",
+			"reconnect": {
+				"minimumDelay": "1000",				"//":"Minimum delay before reconnecting",
+				"maximumDelay": "10000",			"//":"Maximum delay before reconnecting",
+				"step": "500",						"//":"Step this much per try"
+			}
+		},
+
+		"route": {
+			"prefix": ""
+		}
+	}
+}
