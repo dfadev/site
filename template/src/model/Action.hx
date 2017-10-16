@@ -1,8 +1,8 @@
 package model;
 
-import site.net.SiteMessage;
+import site.Msg;
 
 enum Action {
-	NetworkEvent(msg:SiteMessage<NetworkMessage>);
+	NetworkEvent(msg:Msg<NetworkMessage>);
 }
 

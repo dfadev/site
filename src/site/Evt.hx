@@ -1,30 +1,31 @@
-package site.net;
+package site;
 
 import haxe.io.Bytes;
+import site.Msg;
 
 using StringTools;
 
-class DataMessage<T> implements hxbit.Serializable {
+class Evt {
 	static var s(get, null):hxbit.Serializer;
 	static function get_s() return s = (s != null) ? s : new hxbit.Serializer();
 	static var ser:Dynamic;
 
-	static public function use(msgType:String, handler:Dynamic) {
+	static public function setup(msgType:String, handler:Dynamic) {
 		ser = Type.resolveClass("hxbit.enumSer." + msgType.replace(".", "_"));
 		if (ser == null) throw "No enum unserializer for " + msgType;
 		handlers.push(handler);
 	}
 
-    static public function toBytes(msg, ?prependLength = false):Bytes {
+	static public function toBytes(msg, ?prependLength = false):Bytes {
 		s.begin();
 		if (prependLength) s.addInt32(0);// length placeholder
 		ser.doSerialize(s, msg);
 		var bytes = s.end();
 		if (prependLength) bytes.setInt32(0, bytes.length - 4);
 		return bytes;
-    }
+	}
 
-    static public function fromBytes(bytes:Bytes, ?prependLength = false) {
+	static function fromBytes(bytes:Bytes, ?prependLength = false) {
 		s.refs = new Map();
 		if (prependLength) s.setInput(bytes, 4);// skip length placeholder
 		else
@@ -50,6 +51,6 @@ class DataMessage<T> implements hxbit.Serializable {
 		}
 	}
 
-	static var handlers = new Array<SiteMessage<T>->Void>();
+	static var handlers = new Array<Msg<Dynamic>->Void>();
 	public static function emit(msg) for (handler in handlers) { handler(msg); };
 }

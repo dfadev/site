@@ -32,13 +32,13 @@ class WebSocketServer {
 				close(socket);
 				if (sockets[socket.id] != null) {
 					sockets.remove(socket.id);
-					DataMessage.emit(Disconnected(socket));
+					Evt.emit(Disconnected(socket));
 				}
 			});
 
 			WebServer.checkSocketAuth(socket.req, function(err) {
-				socket.on('message', function (msg:js.html.ArrayBuffer) DataMessage.handleMessage(socket.id, socket.id, Bytes.ofData(msg)));
-				DataMessage.emit(Connected(socket));
+				socket.on('message', function (msg:js.html.ArrayBuffer) Evt.handleMessage(socket.id, socket.id, Bytes.ofData(msg)));
+				Evt.emit(Connected(socket));
 			});
 		});
 	}
@@ -46,28 +46,28 @@ class WebSocketServer {
 	static public function close(socket:WebSocket) {
 		if (sockets[socket.id] != null) {
 			sockets.remove(socket.id);
-			DataMessage.emit(Disconnected(socket));
+			Evt.emit(Disconnected(socket));
 		}
 	}
 
 	static public function send(id, msg) {
 		var socket = sockets[id];
 		if (socket == null || socket.readyState != 1) return;
-		var data = DataMessage.asBuffer(msg);
+		var data = Evt.asBuffer(msg);
 		try { socket.send(data, opts); }
 		catch (e:Dynamic) {
-			DataMessage.emit(Error(e));
+			Evt.emit(Error(e));
 			close(socket);
 		}
 	}
 
 	static public function broadcast(msg) {
-		var data = DataMessage.asBuffer(msg);
+		var data = Evt.asBuffer(msg);
 		for (socket in sockets) {
 			if (socket == null || socket.readyState != 1) continue;
 			try { socket.send(data, opts); }
 			catch (e:Dynamic) {
-				DataMessage.emit(Error(e));
+				Evt.emit(Error(e));
 				close(socket);
 			}
 		}

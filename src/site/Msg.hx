@@ -1,6 +1,8 @@
-package site.net;
+package site;
 
-enum SiteMessage<T> {
+import site.net.*;
+
+enum Msg<T> {
 
 #if webserver
 

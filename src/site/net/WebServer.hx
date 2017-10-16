@@ -2,7 +2,7 @@ package site.net;
 
 class WebServer {
 	static public function execute(config:Dynamic) {
-		DataMessage.emit(Starting);
+		Evt.emit(Starting);
 
 		var srv = new js.npm.Express();
 		srv.set('etag', false);
@@ -48,7 +48,7 @@ class WebServer {
 		if (config.listen.websockets) WebSocketServer.execute(http);
 		if (config.appsrv != null && config.appsrv.length > 0) TcpClient.use(config.appsrv);
 
-		DataMessage.emit(Started);
+		Evt.emit(Started);
 
 		return http;
 	}

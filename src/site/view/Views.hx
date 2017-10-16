@@ -12,7 +12,7 @@ class Views {
 
 #if browser
 	public static function execute(config) {
-		site.net.DataMessage.emit(Starting);
+		site.Evt.emit(Starting);
 #if site_ithril
 		routePrefix(config.route.prefix);
 		var path = js.Browser.document.location.pathname;
@@ -22,7 +22,7 @@ class Views {
 #if site_websocket
 		if (config.ws.enable) site.net.WebSocketClient.execute(config.ws);
 #end
-		site.net.DataMessage.emit(Started);
+		site.Evt.emit(Started);
 	}
 
 #elseif (webserver || renderview)

@@ -58,22 +58,22 @@ class TcpClient {
 
 			if (rslt.msg != null) 
 				for (m in rslt.msg) 
-					DataMessage.handleMessage(m, true);
+					Evt.handleMessage(m, true);
 		});
 
-		socket.on(SocketEvent.End, function() DataMessage.emit(ServerDisconnected(this)));
+		socket.on(SocketEvent.End, function() Evt.emit(ServerDisconnected(this)));
 
-		socket.on(SocketEvent.Error, function (err) DataMessage.emit(Error(err)));
+		socket.on(SocketEvent.Error, function (err) Evt.emit(Error(err)));
 
 		socket.on("close", function() haxe.Timer.delay(function() socket.connect({ host: host, port: port }), 2500));
 
 		socket.connect({ host: host, port: port }, onConnected);
 	}
 
-	function onConnected() DataMessage.emit(ServerConnected(this));
+	function onConnected() Evt.emit(ServerConnected(this));
 
 	public function send(msg) {
-		try { socket.write(DataMessage.asBuffer(msg, true)); }
-		catch (e:Dynamic) { DataMessage.emit(Error(e)); }
+		try { socket.write(Evt.asBuffer(msg, true)); }
+		catch (e:Dynamic) { Evt.emit(Error(e)); }
 	}
 }

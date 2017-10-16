@@ -76,9 +76,9 @@ class TcpConnection {
 
 #if sys
 	public function send(msg) {
-		var data = DataMessage.toBytes(msg, true);
+		var data = Evt.toBytes(msg, true);
 		try { socket.output.writeFullBytes(data, 0, data.length); }
-		catch (e:Dynamic) { DataMessage.emit(Error(e)); }
+		catch (e:Dynamic) { Evt.emit(Error(e)); }
 	}
 #end
 }

@@ -2,27 +2,18 @@ import ithril.M.*;
 import util.From;
 import site.net.*;
 import site.view.*;
+import site.Evt;
 import msg.*;
 
 class Site {
-
-	static var cfg = Site.setup("model.NetworkMessage", function (e) controller.Handler.handle(NetworkEvent(e)));
-
-#if browser
-	static public inline function run() Views.execute(cfg);
-#elseif webserver
-	static public inline function run() WebServer.execute(cfg);
-#elseif renderview
-	static public inline function run() RenderView.execute(cfg);
-#elseif appserver
-	static public inline function run() TcpServer.execute(cfg);
-#end
+	static public inline function run(msgType, handler)
+#if browser Views #elseif webserver WebServer #elseif renderview RenderView #elseif appserver TcpServer #end
+		.execute(Site.setup(msgType, handler));
 
 #if !browser
 		static function parseConfig(configFilename:String) {
-			var config:Dynamic = { };
 			var data = haxe.Json.parse(sys.io.File.getContent(configFilename));
-			config = #if appserver data.appserver #else data.webserver #end;
+			var config = #if appserver data.appserver #else data.webserver #end;
 			config.pages = data.pages;
 			return config;
 		}
@@ -83,9 +74,9 @@ class Site {
 		}
 #end
 
-		// let DataMessage know about our message type and handler
+		// let Evt know about our message type and handler
 #if (!browser || site_websocket)
-		DataMessage.use(msgType, msgHandler);
+		Evt.setup(msgType, msgHandler);
 #end
 
 		return config;

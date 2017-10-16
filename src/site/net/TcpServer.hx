@@ -19,7 +19,7 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 		super();
 		this.host = host;
 		this.port = port;
-		DataMessage.emit(Starting);
+		Evt.emit(Starting);
 	}
 
 	function exec() { run(host, port); return this; }
@@ -30,12 +30,12 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 		cnx.id = connections.push(cnx) - 1;
 
 		sockt.setFastSend(true);
-		DataMessage.emit(Connected(cnx));
+		Evt.emit(Connected(cnx));
 		return cnx;
 	}
 
 	override function clientDisconnected(cnx:TcpConnection):Void {
-		DataMessage.emit(Disconnected(cnx));
+		Evt.emit(Disconnected(cnx));
 		connections[cnx.id] = null;
 	}
 
@@ -44,14 +44,14 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 		sock.bind(new sys.net.Host(host), port);
 		sock.listen(listen);
 		init();
-		DataMessage.emit(Started);
+		Evt.emit(Started);
 		while(true) {
 			try { addSocket(sock.accept()); }
 			catch(e : Dynamic) { logError(e); }
 		}
 	}
 
-	override function onError(e, stack) DataMessage.emit(Error([e, stack]));
+	override function onError(e, stack) Evt.emit(Error([e, stack]));
 
 	override function readClientMessage(cnx:TcpConnection, buf:Bytes, start:Int, length:Int) {
 		var rslt = cnx.readClientMessage(buf, start, length);
@@ -61,16 +61,16 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 
 	override function clientMessage(from:TcpConnection, msg:Array<Bytes>) {
 		if (msg == null) return;
-		for (m in msg) DataMessage.handleMessage(from.id, m, true);
+		for (m in msg) Evt.handleMessage(from.id, m, true);
 	}
 
 	public static function send(id, msg) {
 		var cnx = srv.connections[id];
 
 		if (cnx == null) return;
-		var data = DataMessage.toBytes(msg, true);
+		var data = Evt.toBytes(msg, true);
 		try { cnx.socket.output.writeFullBytes(data, 0, data.length); }
-		catch (e:Dynamic) { DataMessage.emit(Error(e)); }
+		catch (e:Dynamic) { Evt.emit(Error(e)); }
 	}
 }
 
