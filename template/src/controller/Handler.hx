@@ -111,7 +111,7 @@ class Handler {
 				switch (msg) {
 					case Connected(proxy):
 						Sys.println('appserver connection accepted');
-						proxy.send(appserverHello); //NetworkMessage.Hello('from appserver to webserver'));
+						proxy.send(appserverHello);
 
 					case Disconnected(proxy):
 						Sys.println('appserver connection disconnected');
