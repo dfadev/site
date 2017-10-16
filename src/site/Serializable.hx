@@ -3,12 +3,21 @@ package site;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-class NetworkMessage {
+class Serializable {
 
+	//stub a @:keep class so the enum serializer gets built
 	macro public function build():Array<Field> {
 		var fields = Context.getBuildFields();
+
 #if (!browser || site_websocket)
-		makeType(["msg"], "NetworkMessageStub");
+		var localType = Context.getLocalType();
+		switch (localType) {
+			case TEnum(rt, p):
+				var t = rt.get();
+				makeType(["msg"], t.name + "Stub");
+			default:
+				throw "can't build stub for type " + localType;
+		}
 #end
 		return fields;
 	}
@@ -18,8 +27,7 @@ class NetworkMessage {
     {
         var pos = Context.currentPos();
 
-        var cdef = macro 
-			class NetworkMessageStub implements hxbit.Serializable { @:s public var n:model.NetworkMessage; }
+        var cdef = macro class $className implements hxbit.Serializable { @:s public var n:model.NetworkMessage; }
 
         cdef.pack = pack.copy();
         cdef.name = className;

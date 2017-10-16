@@ -1,6 +1,6 @@
 package model;
 
-@:build(site.NetworkMessage.build())
+@:build(site.Serializable.build())
 enum NetworkMessage {
 	Hello(world:String);
 }
