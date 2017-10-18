@@ -100,7 +100,6 @@
 				"strategy": "passport-twitter"
 			}
 		}
-
 	},
 
 	"site": {
