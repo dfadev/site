@@ -222,7 +222,7 @@ class Make {
 
 		if (combined.length > 0) {
 			javascriptConfig.push( { content: null, attributes: { src: "combined.js", type: "text/javascript" } } );
-			File.saveContent(Path.join([ config.webserver.htdocs, 'combined.js' ]), combined);
+			File.saveContent(Path.join([ config.webserver.html.path, 'combined.js' ]), combined);
 		}
 	}
 
@@ -282,7 +282,7 @@ class Make {
 
 		if (combined.length > 0) {
 			cssConfig.push( { attributes: { rel: "stylesheet", type: "text/css", href: "combined.css" } } );
-			File.saveContent(Path.join([ config.webserver.htdocs, 'combined.css' ]), combined);
+			File.saveContent(Path.join([ config.webserver.html.path, 'combined.css' ]), combined);
 		}
 	}
 }
