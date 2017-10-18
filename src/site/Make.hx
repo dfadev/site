@@ -79,8 +79,10 @@ class Make {
 		configFilename = Path.join([cwd, "config.json"]);
 		config = Json.parse(File.getContent(configFilename));
 		var pages = config.pages;
+		var webserver = config.webserver;
 		config = config.site;
 		config.pages = pages;
+		config.webserver = webserver;
 		From.removeMeta(config);
 		compress = config.browser.compress;
 		verbose = config.verbose;
@@ -154,6 +156,7 @@ class Make {
 
 		// include components
 		var pagesOutputFilename = Path.join([cwd, 'obj', 'pages-config.hxml' ]);
+		var webserverPagesOutputFilename = Path.join([cwd, 'obj', 'webserver-pages-config.hxml' ]);
 		content = "";
 		var keys = Reflect.fields(config.pages);
 		var components = new StringMap();
@@ -165,6 +168,8 @@ class Make {
 		}
 		for (value in components.keys()) content += '$value\n';
 		File.saveContent(pagesOutputFilename, content);
+		if (!config.webserver.html.render) content = "";
+		File.saveContent(webserverPagesOutputFilename, content);
 	}
 
 	function packageJavascript() {

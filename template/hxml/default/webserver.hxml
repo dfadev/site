@@ -4,7 +4,7 @@ hxml/default/common.hxml
 -cmd echo Building webserver.js
 --next
 hxml/custom/webserver.hxml
-obj/pages-config.hxml
+obj/webserver-pages-config.hxml
 
 # js-kit provides js externs
 -lib js-kit
