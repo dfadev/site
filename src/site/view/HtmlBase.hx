@@ -31,6 +31,10 @@ class HtmlBase extends Component {
 			attrs = { };
 			txt = "Missing Component: " + vnode.attrs.component;
 		}
+		var head:Dynamic = null;
+		if (vnode.attrs.head != null)
+			head = Type.resolveClass(vnode.attrs.head);
+
 		return @m[
 #if !browser
 		(!doctype)
@@ -47,9 +51,12 @@ class HtmlBase extends Component {
 					(link(css.attributes))
 				($else)
 					(style(css.attributes) > @trust css.content)
+			($if (head != null))
+				[m(head, attrs)]
 		(body)
 #end
-			[m(component, attrs, txt)]
+			($if (component != null))
+				[m(component, attrs, txt)]
 #if !browser
 			(vnode.attrs.html.include.script >> script)
 				($if (script.content == null))

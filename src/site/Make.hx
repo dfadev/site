@@ -157,7 +157,12 @@ class Make {
 		content = "";
 		var keys = Reflect.fields(config.pages);
 		var components = new StringMap();
-		for (key in keys) components.set(Reflect.field(config.pages, key).component, "");
+		for (key in keys) {
+			var entry = Reflect.field(config.pages, key);
+			components.set(entry.component, "");
+			if (entry.head != null)
+				components.set(entry.head, "");
+		}
 		for (value in components.keys()) content += '$value\n';
 		File.saveContent(pagesOutputFilename, content);
 	}

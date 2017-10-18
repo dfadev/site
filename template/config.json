@@ -195,6 +195,7 @@
 	"pages": {
 		"/": {
 			"component": "view.HomePage",
+			"head": "view.Head",
 			"title": "Home"
 		}
 	},
