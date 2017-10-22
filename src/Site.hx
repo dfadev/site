@@ -69,8 +69,9 @@ class Site {
 		var fields:Array<String> = untyped __js__("Object.keys({0})", config.pages);
 		#end
 		for (href in fields) {
-			var view = m(HtmlBase, site.Config.pageAttributes(href, config));
-			Views.setRoute(href, function (vnode) return view);
+			Views.setRoute(href, function (vnode) {
+				return m(HtmlBase, site.Config.pageAttributes(href, config));
+			});
 		}
 #end
 
