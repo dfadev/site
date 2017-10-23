@@ -87,6 +87,7 @@ class BackEnd {
 		try {
 			var i = id;
 			var tcp = connections[id];
+			if (tcp == null) id = 0;
 			while (tcp == null) {
 				i++;
 				if (i >= connections.length) break;
