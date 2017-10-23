@@ -78,11 +78,6 @@ class BackEnd {
 
 	function onConnected() Evt.emit(ServerConnected(this));
 
-	//public function send(msg) {
-		//try { socket.write(Evt.asBuffer(msg, true)); }
-		//catch (e:Dynamic) { Evt.emit(Error(e)); }
-	//}
-
 	public static function send(?id:Int = 0, msg) {
 		try {
 			var i = id;
