@@ -1,6 +1,13 @@
 package site.net;
 
+import js.npm.express.Middleware;
+import js.npm.express.Middleware.MiddlewareNext;
+import js.npm.express.Request;
+import js.npm.express.Response;
+
 class WebServer {
+	static public var passportAuth:Middleware;
+
 	static public function execute(config:Dynamic) {
 		Evt.emit(Starting);
 
@@ -23,12 +30,22 @@ class WebServer {
 
 		srv.use(cookieParser).use(sess).use(passportInit).use(passportSession);
 
+		srv.use(function (req:Request, res:Response, next:MiddlewareNext) {
+			var user:Dynamic = untyped req.user;
+			if (user) Sys.println('user access: ${user.username}');
+			else Sys.println('anonymous access ${user}');
+			next();
+		});
+
 		for (key in Reflect.fields(config.auth)) {
 			var provider = Reflect.field(config.auth, key);
 			if (key == "options" || !provider.enable) continue;
-			js.npm.Passport.use(key, untyped Type.createInstance(untyped require(provider.strategy).Strategy, [provider, auth]));
-			srv.get(js.node.Url.parse(provider.callbackURL).path, js.npm.Passport.authenticate(key, config.auth.options));
+			untyped __js__('{0}.use({1}, eval({2}), {3})', js.npm.Passport, key, provider.strategy, [provider, auth]);
+			if (provider.callbackURL != null)
+				srv.get(js.node.Url.parse(provider.callbackURL).path, js.npm.Passport.authenticate(key, config.auth.options));
 		}
+
+		WebServer.passportAuth = js.npm.Passport.authenticate('local', { failureRedirect: '/', successRedirect: '/success' } );
 
 		js.npm.Passport.serializeUser(function(user, cb) cb(null, user));
 		js.npm.Passport.deserializeUser(function(user, cb) cb(null, user));
@@ -46,7 +63,7 @@ class WebServer {
 		http.listen(config.listen);
 		
 		if (config.listen.websockets) WebSocketServer.execute(http);
-		if (config.appsrv != null && config.appsrv.length > 0) TcpClient.use(config.appsrv);
+		if (config.appsrv != null && config.appsrv.length > 0) BackEnd.use(config.appsrv);
 
 		Evt.emit(Started);
 

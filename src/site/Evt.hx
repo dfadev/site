@@ -25,7 +25,7 @@ class Evt {
 		return bytes;
 	}
 
-	static function fromBytes(bytes:Bytes, ?prependLength = false) {
+	static public function fromBytes(bytes:Bytes, ?prependLength = false) {
 		s.refs = new Map();
 		if (prependLength) s.setInput(bytes, 4);// skip length placeholder
 		else

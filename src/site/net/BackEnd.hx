@@ -8,10 +8,12 @@ import js.node.net.Socket;
 import js.node.Buffer;
 #end
 
-class TcpClient {
+class BackEnd {
+	static public var connections:Array<BackEnd> = new Array<BackEnd>();
 	static public function use(appservers:Array<{ host:String, port:Int }>) {
 		for (appsrv in appservers) {
-			var srv = new TcpClient(appsrv.host, Std.int(appsrv.port));
+			var srv = new BackEnd(appsrv.host, Std.int(appsrv.port));
+			connections.push(srv);
 			srv.connect();
 		}
 	}
@@ -61,7 +63,11 @@ class TcpClient {
 					Evt.handleMessage(m, true);
 		});
 
-		socket.on(SocketEvent.End, function() Evt.emit(ServerDisconnected(this)));
+		socket.on(SocketEvent.End, function() {
+			trace('socket end');
+			connections[connections.indexOf(this)] = null;
+			Evt.emit(ServerDisconnected(this));
+		});
 
 		socket.on(SocketEvent.Error, function (err) Evt.emit(Error(err)));
 
@@ -72,8 +78,28 @@ class TcpClient {
 
 	function onConnected() Evt.emit(ServerConnected(this));
 
-	public function send(msg) {
-		try { socket.write(Evt.asBuffer(msg, true)); }
-		catch (e:Dynamic) { Evt.emit(Error(e)); }
+	//public function send(msg) {
+		//try { socket.write(Evt.asBuffer(msg, true)); }
+		//catch (e:Dynamic) { Evt.emit(Error(e)); }
+	//}
+
+	public static function send(?id:Int = 0, msg) {
+		try {
+			var i = id;
+			var tcp = connections[id];
+			while (tcp == null) {
+				i++;
+				if (i >= connections.length) break;
+				tcp = connections[i];
+			}
+			if (tcp == null) {
+				Evt.emit(Error("BackEnd not connected"));
+				return;
+			}
+			tcp.socket.write(Evt.asBuffer(msg, true));
+		}
+		catch (e:Dynamic) {
+			Evt.emit(Error(e));
+		}
 	}
 }

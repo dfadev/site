@@ -5,7 +5,7 @@ import haxe.io.Bytes;
 
 class WebSocketServer {
 	static var opts = { binary: true };
-	static var sockets = new Map<Int, WebSocket>();
+	static public var sockets = new Map<Int, WebSocket>();
 	static var wss:js.npm.uws.WebSocketServer;
 	static var idCounter = 0;
 	static inline function getNextId() return ++ idCounter;
@@ -55,6 +55,16 @@ class WebSocketServer {
 		if (socket == null || socket.readyState != 1) return;
 		var data = Evt.asBuffer(msg);
 		try { socket.send(data, opts); }
+		catch (e:Dynamic) {
+			Evt.emit(Error(e));
+			close(socket);
+		}
+	}
+
+	static public function sendb(id, bytes) {
+		var socket = sockets[id];
+		if (socket == null || socket.readyState != 1) return;
+		try { socket.send(bytes, opts); }
 		catch (e:Dynamic) {
 			Evt.emit(Error(e));
 			close(socket);

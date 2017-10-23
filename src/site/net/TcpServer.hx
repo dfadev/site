@@ -4,7 +4,7 @@ import haxe.io.Bytes;
 import haxe.io.BytesOutput;
 
 class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
-	static var srv:TcpServer;
+	public static var srv:TcpServer;
 	public static function execute(config:TcpServerConfiguration) {
 		srv = new TcpServer(config.listen.host, config.listen.port);
 		srv.exec();
@@ -12,8 +12,9 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 
 	var host:String;
 	var port:Int;
+	var cnx:TcpConnection;
 
-	var connections:Array<TcpConnection> = new Array<TcpConnection>();
+	public var connections:Array<TcpConnection> = new Array<TcpConnection>();
 
 	function new(host:String, port:Int) {
 		super();
@@ -25,7 +26,7 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 	function exec() { run(host, port); return this; }
 
 	override function clientConnected(sockt) {
-		var cnx = new TcpConnection();
+		cnx = new TcpConnection();
 		cnx.socket = sockt;
 		cnx.id = connections.push(cnx) - 1;
 
@@ -37,6 +38,7 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 	override function clientDisconnected(cnx:TcpConnection):Void {
 		Evt.emit(Disconnected(cnx));
 		connections[cnx.id] = null;
+		this.cnx = null;
 	}
 
 	override function run(host, port) {
@@ -61,7 +63,7 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 
 	override function clientMessage(from:TcpConnection, msg:Array<Bytes>) {
 		if (msg == null) return;
-		for (m in msg) Evt.handleMessage(from.id, m, true);
+		for (m in msg) Evt.handleMessage(from.id, cnx.id, m, true);
 	}
 
 	public static function send(id, msg) {

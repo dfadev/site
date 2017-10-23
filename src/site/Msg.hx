@@ -8,8 +8,8 @@ enum Msg<T> {
 
 	Connected(cnx:js.npm.uws.WebSocket);
 	Disconnected(cnx:js.npm.uws.WebSocket);
-	ServerConnected(proxy:TcpClient);
-	ServerDisconnected(proxy:TcpClient);
+	ServerConnected(proxy:BackEnd);
+	ServerDisconnected(proxy:BackEnd);
 
 #elseif browser
 
