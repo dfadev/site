@@ -14,7 +14,12 @@ class Serializable {
 		switch (localType) {
 			case TEnum(rt, p):
 				var t = rt.get();
-				makeType(["msg"], t.name + "Stub");
+				makeType(["msg"], t.name + "Stub", 
+						TPath(
+						{
+							name: t.name,
+							pack: t.pack
+						}));
 			default:
 				throw "can't build stub for type " + localType;
 		}
@@ -23,27 +28,26 @@ class Serializable {
 	}
 
 #if macro
-    static function makeType(pack:Array<String>, className:String)
-    {
-        var pos = Context.currentPos();
+	static function makeType(pack:Array<String>, className:String, enumType)
+	{
+		var pos = Context.currentPos();
+		var cdef = macro class $className implements hxbit.Serializable { @:s public var n:$enumType; }
 
-        var cdef = macro class $className implements hxbit.Serializable { @:s public var n:model.NetworkMessage; }
+		cdef.pack = pack.copy();
+		cdef.name = className;
 
-        cdef.pack = pack.copy();
-        cdef.name = className;
+		cdef.meta = [{
+			name: ':keep',
+			params: [],
+			pos: pos
+		}];
 
-        cdef.meta = [{
-            name: ':keep',
-            params: [],
-            pos: pos
-        }];
+		haxe.macro.Context.defineType(cdef);
 
-        haxe.macro.Context.defineType(cdef);
-
-        return {
-            expr:EConst(CIdent(className)),
-            pos:pos
-        };
-    }
+		return {
+			expr:EConst(CIdent(className)),
+			pos:pos
+		};
+	}
 #end
 }
