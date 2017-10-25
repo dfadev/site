@@ -107,4 +107,32 @@ class Site {
 	}
 #end
 
+#if browser
+	public static inline function send(msg) site.net.WebSocketClient.send(msg);
+#end
+#if webserver
+	public static inline function passportAuth(req, res, next) untyped site.net.WebServer.passportAuth(req, res, next);
+	public static inline function backend(msg) site.net.BackEnd.send(0, msg);
+	public static inline function send(clientId:Int, msg) site.net.WebSocketServer.send(clientId, msg);
+	public static inline function sendb(id, bytes) site.net.WebSocketServer.sendb(id, bytes);
+
+	public static inline function user(id) {
+		var socket = site.net.WebSocketServer.sockets.get(id);
+		if (socket == null) return null;
+
+		var user:Dynamic = socket.req.user;
+		return user;
+	}
+
+	public static inline function req(id) {
+		var socket = site.net.WebSocketServer.sockets.get(id);
+		if (socket == null) return null;
+
+		return socket.req;
+	}
+#end
+#if appserver
+	public static inline function send(id, msg) site.net.TcpServer.send(id, msg);
+	public static inline function work(func) site.net.TcpServer.srv.work(func);
+#end
 }
