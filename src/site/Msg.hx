@@ -4,7 +4,13 @@ import site.net.*;
 
 enum Msg<T> {
 
-#if webserver
+#if DOX
+	Connected(cnx:Dynamic);
+	Disconnected(cnx:Dynamic);
+	ServerConnected(proxy:Dynamic);
+	ServerDisconnected(proxy:Dynamic);
+
+#elseif webserver
 
 	Connected(cnx:js.npm.uws.WebSocket);
 	Disconnected(cnx:js.npm.uws.WebSocket);
