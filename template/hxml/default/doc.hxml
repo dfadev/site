@@ -1,0 +1,65 @@
+-D doc-gen
+-D DOX
+
+hxml/default/common.hxml
+hxml/custom/doc.hxml
+--each
+#### SRV
+--next
+-cmd echo ------------------------------------
+-cmd echo Building server xml
+-cmd echo ------------------------------------
+--next
+obj/build-config.hxml
+hxml/custom/appserver.hxml
+
+-D appserver
+
+-cp src
+-cp lib
+-main App
+-xml obj/xml/server.xml
+-cpp placeholder
+-dce no
+--no-output
+
+#### HUB
+--next
+-cmd echo ------------------------------------
+-cmd echo Building hub xml
+-cmd echo ------------------------------------
+--next
+hxml/custom/webserver.hxml
+
+-D webserver
+-cp src
+-lib js-kit
+-lib hxnodejs
+-cp lib
+-main App
+-js placeholder
+-xml obj/xml/hub.xml
+--no-output
+
+#### CLIENT
+--next
+-cmd echo ------------------------------------
+-cmd echo Building client xml
+-cmd echo ------------------------------------
+--next
+obj/build-config.hxml
+hxml/custom/client.hxml
+
+-D browser
+
+-cp lib
+-cp src
+-main App 
+-xml obj/xml/client.xml
+-js placeholder
+--no-output
+
+--next
+-cmd haxelib run dox -i obj/xml/ --output-path docs/dox --title "Developer Documentation" --include "^model*." --include "^controller*." --include "^view*." --include "^app*." --include "^resource*." --include "^util*." --include "^App*."
+--next
+-cmd echo Finished building docs.
