@@ -3,7 +3,7 @@ package site;
 import haxe.io.Path;
 import sys.io.File;
 import sys.FileSystem;
-import util.From;
+import site.util.From;
 import haxe.Json;
 import haxe.ds.StringMap;
 

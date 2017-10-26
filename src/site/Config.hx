@@ -3,7 +3,7 @@ package site;
 import ithril.Attributes;
 import ithril.Ithril;
 import ithril.M.*;
-import util.From;
+import site.util.From;
 
 // Application configuration
 class Config {

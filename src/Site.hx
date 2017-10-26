@@ -1,5 +1,5 @@
 import ithril.M.*;
-import util.From;
+import site.util.From;
 import site.net.*;
 import site.view.*;
 import site.Evt;
@@ -21,8 +21,8 @@ class Site {
 
 	static public function setup(msgType, msgHandler) {
 #if browser
-		var config:Dynamic = util.From.json("config.json", "browser");
-		config.pages = util.From.json("config.json", "pages");
+		var config:Dynamic = From.json("config.json", "browser");
+		config.pages = From.json("config.json", "pages");
 #else
 		var config:Dynamic = { };
 		var configFilename = "config.json";

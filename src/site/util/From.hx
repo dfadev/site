@@ -1,4 +1,4 @@
-package util;
+package site.util;
 
 #if macro
 import haxe.macro.Context;
@@ -7,7 +7,7 @@ import haxe.macro.Expr;
 
 class From
 {
-    macro public static inline function file(path:String) return toExpr(loadFileAsString(path));
+  macro public static inline function file(path:String) return toExpr(loadFileAsString(path));
 
 	macro public static inline function command(cmd:String, ?args:Array<String>) return toExpr(getCommandOutputAsString(cmd, args));
 
@@ -18,15 +18,15 @@ class From
 		return macro $v{value};
 	}
 
-    macro public static function json(path:String, rootNode:String = null) { //:ExprOf<{}> {
-			var content = loadFileAsString(path);
-			var obj = try haxe.Json.parse(content) catch (e:Dynamic) {
-				haxe.macro.Context.error('Json from $path failed to validate: $e', Context.currentPos());
-			}
-			if (rootNode != null) obj = Reflect.field(obj, rootNode);
-			removeMeta(obj);
-			return toExpr(untyped obj);
+  macro public static function json(path:String, rootNode:String = null) { //:ExprOf<{}> {
+    var content = loadFileAsString(path);
+    var obj = try haxe.Json.parse(content) catch (e:Dynamic) {
+      haxe.macro.Context.error('Json from $path failed to validate: $e', Context.currentPos());
     }
+    if (rootNode != null) obj = Reflect.field(obj, rootNode);
+    removeMeta(obj);
+    return toExpr(untyped obj);
+  }
 
 	static public function removeMeta(obj) {
 		var queue = [ obj ];
