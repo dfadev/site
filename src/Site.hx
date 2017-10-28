@@ -111,6 +111,10 @@ class Site {
 	public static inline function send(msg) site.net.WebSocketClient.send(msg);
 #end
 #if webserver
+  public static inline function setPassportParseUser(serialize, deserialize) {
+    site.net.WebServer.serializeUser = serialize;
+    site.net.WebServer.deserializeUser = deserialize;
+  }
 	public static inline function passportAuth(req, res, next) untyped site.net.WebServer.passportAuth(req, res, next);
 	public static inline function backend(msg) site.net.BackEnd.send(0, msg);
 	public static inline function send(clientId:Int, msg) site.net.WebSocketServer.send(clientId, msg);

@@ -30,25 +30,29 @@ class WebServer {
 
 		srv.use(cookieParser).use(sess).use(passportInit).use(passportSession);
 
+#if verbose
 		srv.use(function (req:Request, res:Response, next:MiddlewareNext) {
 			var user:Dynamic = untyped req.user;
-			if (user) Sys.println('user access: ${user.username}');
+			if (user) {
+        Sys.println('user access: ${user.username}');
+      }
 			else Sys.println('anonymous access ${user}');
 			next();
 		});
+#end
 
 		for (key in Reflect.fields(config.auth)) {
 			var provider = Reflect.field(config.auth, key);
 			if (key == "options" || !provider.enable) continue;
-			untyped __js__('{0}.use({1}, eval({2}), {3})', js.npm.Passport, key, provider.strategy, [provider, auth]);
+      untyped __js__('{0}.use({1}, eval({2}), {3})', js.npm.Passport, key, provider.strategy, [provider, auth]);
 			if (provider.callbackURL != null)
 				srv.get(js.node.Url.parse(provider.callbackURL).path, js.npm.Passport.authenticate(key, config.auth.options));
 		}
 
-		WebServer.passportAuth = js.npm.Passport.authenticate('local', { failureRedirect: '/', successRedirect: '/success' } );
+		WebServer.passportAuth = js.npm.Passport.authenticate('local', { failureRedirect: '/', successRedirect: '/' } );
 
-		js.npm.Passport.serializeUser(function(user, cb) cb(null, user));
-		js.npm.Passport.deserializeUser(function(user, cb) cb(null, user));
+		js.npm.Passport.serializeUser(serializeUser);
+		js.npm.Passport.deserializeUser(deserializeUser);
 
 		srv.get(config.auth.options.logoutURL, function(req:Dynamic, res) { req.logout(); res.redirect('/'); });
 
@@ -72,4 +76,7 @@ class WebServer {
 
 	static function auth(access, refresh, profile, cb) return cb(null, profile);
 	static public dynamic function checkSocketAuth(req, callback) { }
+
+  static public dynamic function serializeUser(user, cb) { }
+  static public dynamic function deserializeUser(user, cb) { }
 }
