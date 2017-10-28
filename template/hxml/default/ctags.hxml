@@ -1,0 +1,6 @@
+--each
+--next
+-cmd echo Building ctags
+--next
+########### CTAGS
+-cmd HAXESTD=/usr/lib/haxe/std && ctags --languages=haxe --exclude=_std -R src lib $HAXESTD/cpp/ $HAXESTD/haxe/ $HAXESTD/sys/ $HAXESTD/*.hx;

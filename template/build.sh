@@ -7,4 +7,4 @@ if [ ! -d node_modules ]; then
 	site npm
 fi
 
-site hxml && haxe hxml/default/client.hxml && site pack && concurrently "$APPSRV" "$WEBSRV" "$RENDERVIEW" && site html
+site hxml && haxe hxml/default/client.hxml && site pack && concurrently "$APPSRV" "$WEBSRV" "$RENDERVIEW" && site html && haxe hxml/default/ctags.hxml
