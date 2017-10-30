@@ -52,6 +52,7 @@
 			"resave": false,							"//":"Resave every time",
 			"saveUninitialized": true,		"//":"Save uninitialized sessions",
 			"secret": "123",							"//":"Secret hashing",
+      "cookie": { },
 			"store": {										"//":"SessionStore configuration"
 			}
 		},
