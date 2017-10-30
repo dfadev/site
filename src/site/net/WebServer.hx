@@ -18,9 +18,6 @@ class WebServer {
 		if (config.listen.compression) srv.use(new js.npm.express.Compression());
 		if (config.listen.httpLogFormat != null) srv.use(new js.npm.express.Morgan(config.listen.httpLogFormat));
 		srv.get('/favicon.ico', function (req, res:Dynamic) res.status(404).end());
-		if (config.html.render)
-			srv.get("*", config.html.renderFunction);
-		srv.use('/', new js.npm.express.Static(config.html.path, config.html.options));
 
 		var cookieParser = new js.npm.express.CookieParser();
 		config.session.store = js.npm.SessionStore.createSessionStore(config.session.store);
@@ -29,6 +26,10 @@ class WebServer {
 		var passportSession = js.npm.Passport.session();
 
 		srv.use(cookieParser).use(sess).use(passportInit).use(passportSession);
+    
+		if (config.html.render)
+			srv.get("*", config.html.renderFunction);
+		srv.use('/', new js.npm.express.Static(config.html.path, config.html.options));
 
 #if verbose
 		srv.use(function (req:Request, res:Response, next:MiddlewareNext) {
