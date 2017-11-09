@@ -65,31 +65,32 @@ class BackEnd {
 
 		socket.on(SocketEvent.End, function() {
 			trace('socket end');
-			connections[connections.indexOf(this)] = null;
 			Evt.emit(ServerDisconnected(this));
 		});
 
 		socket.on(SocketEvent.Error, function (err) Evt.emit(Error(err)));
 
-		socket.on("close", function() haxe.Timer.delay(function() socket.connect({ host: host, port: port }), 2500));
+		socket.on("close", function() haxe.Timer.delay(function() { socket.connect({ host: host, port: port }); }, 2500));
 
 		socket.connect({ host: host, port: port }, onConnected);
 	}
 
 	function onConnected() Evt.emit(ServerConnected(this));
 
-	public static function send(?id:Int = 0, msg) {
+	public static function send(?id:Int = -1, msg) {
 		try {
-			var i = id;
-			var tcp = connections[id];
-			if (tcp == null) id = 0;
-			while (tcp == null) {
-				i++;
-				if (i >= connections.length) break;
-				tcp = connections[i];
-			}
+      var tcp = null;
+      if (id == -1) {
+        tcp = connections[id];
+      } else {
+        for (i in 0...connections.length) {
+          tcp = connections[i];
+          if (tcp != null) break;
+        }
+      }
+
 			if (tcp == null) {
-				Evt.emit(Error("BackEnd not connected"));
+				Evt.emit(Error('BackEnd not connected, ${connections.length}'));
 				return;
 			}
 			tcp.socket.write(Evt.asBuffer(msg, true));
