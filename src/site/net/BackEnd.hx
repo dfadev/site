@@ -70,12 +70,12 @@ class BackEnd {
 
 		socket.on(SocketEvent.Error, function (err) Evt.emit(Error(err)));
 
+		socket.on("connect", function() Evt.emit(ServerConnected(this)));
+
 		socket.on("close", function() haxe.Timer.delay(function() { socket.connect({ host: host, port: port }); }, 2500));
 
-		socket.connect({ host: host, port: port }, onConnected);
+		socket.connect({ host: host, port: port });
 	}
-
-	function onConnected() Evt.emit(ServerConnected(this));
 
 	public static function send(?id:Int = -1, msg) {
 		try {
