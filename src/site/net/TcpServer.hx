@@ -67,7 +67,16 @@ class TcpServer extends cpp.net.ThreadServer<TcpConnection, Array<Bytes>> {
 	}
 
 	public static function send(id, msg) {
-		var cnx = srv.connections[id];
+		var cnx:TcpConnection = null;
+		if (id == -1) {
+			for (c in srv.connections) {
+				if (c != null) {
+					cnx = c;
+					break;
+				}
+			}
+		} else 
+			cnx = srv.connections[id];
 
 		if (cnx == null) return;
 		var data = Evt.toBytes(msg, true);
