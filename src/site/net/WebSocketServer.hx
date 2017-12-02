@@ -82,4 +82,17 @@ class WebSocketServer {
 			}
 		}
 	}
+
+	static public function getUserSocketIds(userId) {
+		var ids:Array<Int> = [];
+		for (s in sockets) {
+			if (s.req == null || s.req.user == null) continue;
+			trace(s.id + ':  ' + s.req.user._id + ' == ' + userId);
+			if (s.req.user._id.toString() == userId.toString()) {
+				trace('adding ${s.id}');
+				ids.push(s.id);
+			}
+		}
+		return ids;
+	}
 }
