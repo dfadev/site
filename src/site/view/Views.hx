@@ -15,15 +15,19 @@ class Views {
 		site.Evt.emit(Starting);
 #if site_ithril
 		routePrefix(config.route.prefix);
-		var path = js.Browser.document.location.pathname;
-		if (path == "/index.html") path = "/";
-		route(js.Browser.document.body, path, routes);
+		//var path = js.Browser.document.location.pathname;
+		//if (path == "/index.html") path = "/";
+    //goto(path);
 #end
 #if site_websocket
 		if (config.ws.enable) site.net.WebSocketClient.execute(config.ws);
 #end
 		site.Evt.emit(Started);
 	}
+
+  public static function goto(path) {
+		route(js.Browser.document.body, path, routes);
+  }
 
 #elseif (webserver || renderview)
 	public static function render(request:Dynamic, response:Dynamic, next:Dynamic) {

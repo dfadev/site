@@ -109,6 +109,7 @@ class Site {
 
 #if browser
 	public static inline function send(msg) site.net.WebSocketClient.send(msg);
+  public static inline function goto(path) site.view.Views.goto(path);
 #end
 #if webserver
   public static inline function setPassportParseUser(serialize, deserialize) {
